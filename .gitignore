@@ -33,20 +33,13 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 /app/generated/prisma
 
 # clerk configuration (can include secrets)
 /.clerk/
-
-# Local deploy scripts
-.deploy-setup/
 
 # Claude Code local settings
 .claude/

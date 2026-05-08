@@ -34,7 +34,7 @@ export default async function ClientDetailPage({
   const { id } = await params
   const { orgId: clerkOrgId } = await auth()
 
-  if (!clerkOrgId) redirect('/sign-in')
+  if (!clerkOrgId) redirect('/onboarding')
 
   const org = await getOrganizationByClerkId(clerkOrgId)
   if (!org) redirect('/onboarding')

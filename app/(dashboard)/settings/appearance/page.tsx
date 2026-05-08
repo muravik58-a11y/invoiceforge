@@ -13,9 +13,10 @@ export const metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function AppearanceSettingsPage() {
-  const { orgId: clerkOrgId } = await auth()
+  const { userId, orgId: clerkOrgId } = await auth()
 
-  if (!clerkOrgId) redirect('/sign-in')
+  if (!userId) redirect('/sign-in')
+  if (!clerkOrgId) redirect('/onboarding')
 
   const org = await getOrganizationByClerkId(clerkOrgId)
   if (!org) redirect('/onboarding')

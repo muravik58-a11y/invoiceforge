@@ -16,8 +16,19 @@ export default async function DashboardLayout({
     redirect('/sign-in')
   }
 
-  const org = clerkOrgId ? await getOrganizationByClerkId(clerkOrgId) : null
-  const plan = (org?.planId?.toLowerCase() ?? 'free') as 'free' | 'pro' | 'enterprise'
+  // User is authenticated but has no org — send to onboarding to create one
+  if (!clerkOrgId) {
+    redirect('/onboarding')
+  }
+
+  const org = await getOrganizationByClerkId(clerkOrgId)
+
+  // Org exists in Clerk but not yet in our DB — trigger onboarding
+  if (!org) {
+    redirect('/onboarding')
+  }
+
+  const plan = (org.planId?.toLowerCase() ?? 'free') as 'free' | 'pro' | 'enterprise'
 
   return (
     <div className="relative min-h-screen bg-background">

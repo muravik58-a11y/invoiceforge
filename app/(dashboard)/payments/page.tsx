@@ -15,8 +15,12 @@ export const dynamic = 'force-dynamic'
 export default async function PaymentsPage() {
   const { orgId: clerkOrgId, userId } = await auth()
 
-  if (!userId || !clerkOrgId) {
+  if (!userId) {
     redirect('/sign-in')
+  }
+
+  if (!clerkOrgId) {
+    redirect('/onboarding')
   }
 
   const org = await getOrganizationByClerkId(clerkOrgId)

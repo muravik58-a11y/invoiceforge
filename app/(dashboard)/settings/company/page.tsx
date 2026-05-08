@@ -14,10 +14,14 @@ export const metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function CompanySettingsPage() {
-  const { orgId: clerkOrgId } = await auth()
+  const { orgId: clerkOrgId, userId } = await auth()
+
+  if (!userId) {
+    redirect('/sign-in')
+  }
 
   if (!clerkOrgId) {
-    redirect('/sign-in')
+    redirect('/onboarding')
   }
 
   const org = await getOrganizationByClerkId(clerkOrgId)

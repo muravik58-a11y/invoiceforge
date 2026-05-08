@@ -11,10 +11,14 @@ export const metadata = {
 }
 
 export default async function RecurringPage() {
-  const { orgId: clerkOrgId } = await auth()
+  const { orgId: clerkOrgId, userId } = await auth()
+
+  if (!userId) {
+    redirect('/sign-in')
+  }
 
   if (!clerkOrgId) {
-    redirect('/sign-in')
+    redirect('/onboarding')
   }
 
   const org = await getOrganizationByClerkId(clerkOrgId)

@@ -14,8 +14,12 @@ export const metadata = {
 export default async function NewInvoicePage() {
   const { orgId: clerkOrgId, userId } = await auth()
 
-  if (!clerkOrgId || !userId) {
+  if (!userId) {
     redirect('/sign-in')
+  }
+
+  if (!clerkOrgId) {
+    redirect('/onboarding')
   }
 
   const org = await getOrganizationByClerkId(clerkOrgId)

@@ -20,7 +20,7 @@ export default async function InvoiceDetailRoute({ params }: Props) {
   const { orgId: clerkOrgId } = await auth()
 
   if (!clerkOrgId) {
-    redirect('/sign-in')
+    redirect('/onboarding')
   }
 
   const org = await getOrganizationByClerkId(clerkOrgId)

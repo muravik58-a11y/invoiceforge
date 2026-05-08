@@ -21,8 +21,12 @@ export default async function EditInvoicePage({ params }: Props) {
   const { id } = await params
   const { orgId: clerkOrgId, userId } = await auth()
 
-  if (!clerkOrgId || !userId) {
+  if (!userId) {
     redirect('/sign-in')
+  }
+
+  if (!clerkOrgId) {
+    redirect('/onboarding')
   }
 
   const org = await getOrganizationByClerkId(clerkOrgId)

@@ -16,11 +16,15 @@ export const dynamic = 'force-dynamic'
 
 export default async function DashboardHomePage() {
   // ── Authentication ────────────────────────────────────────────────────────
-  const { orgId: clerkOrgId } = await auth()
+  const { orgId: clerkOrgId, userId } = await auth()
+
+  if (!userId) {
+    redirect('/sign-in')
+  }
 
   if (!clerkOrgId) {
-    // User is signed in but has no org — send them to the org creation flow
-    redirect('/sign-in')
+    // User is signed in but has no org — send them to onboarding
+    redirect('/onboarding')
   }
 
   // ── Organisation ──────────────────────────────────────────────────────────

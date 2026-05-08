@@ -10,10 +10,14 @@ export const metadata = {
 }
 
 export default async function TeamSettingsPage() {
-  const { userId } = await auth()
+  const { userId, orgId: clerkOrgId } = await auth()
 
   if (!userId) {
     redirect('/sign-in')
+  }
+
+  if (!clerkOrgId) {
+    redirect('/onboarding')
   }
 
   return (

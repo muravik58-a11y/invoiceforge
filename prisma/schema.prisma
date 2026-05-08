@@ -472,5 +472,9 @@ model SiteConfig {
   planLimitsPro        Json
   planLimitsEnterprise Json
 
+  // Per-plan pricing in pence (JSON: { FREE: 0, PRO: 1200, ENTERPRISE: 4900 })
+  // null = not yet synced; admin can override manually
+  planPrices           Json?
+
   updatedAt            DateTime @updatedAt
 }

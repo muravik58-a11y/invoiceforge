@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
 import { getOrganizationByClerkId } from '@/lib/actions/organization'
+import { getPlanPrices } from '@/lib/actions/admin'
 import { SettingsLayout } from '@/components/settings/settings-layout'
 import { BillingSettings } from '@/components/settings/billing-settings'
 import prisma from '@/lib/prisma'
@@ -52,6 +53,9 @@ export default async function BillingSettingsPage() {
 
   const currentPlan = org.planId.toLowerCase() as 'free' | 'pro' | 'enterprise'
 
+  // Fetch plan prices from DB (synced from Stripe or set by admin)
+  const prices = await getPlanPrices()
+
   return (
     <SettingsLayout>
       <BillingSettings
@@ -59,6 +63,8 @@ export default async function BillingSettingsPage() {
         currentPlan={currentPlan}
         invoicesUsed={invoicesUsed}
         clientsUsed={clientsUsed}
+        proPricePence={prices.PRO}
+        enterprisePricePence={prices.ENTERPRISE}
       />
     </SettingsLayout>
   )

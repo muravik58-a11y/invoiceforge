@@ -41,65 +41,70 @@ interface Plan {
   stripePriceId?: string
 }
 
-const PLANS: Plan[] = [
-  {
-    id: 'free',
-    name: 'Free',
-    price: 0,
-    priceLabel: '£0/mo',
-    description: 'For freelancers just getting started',
-    icon: ZapIcon,
-    badgeClass: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
-    features: [
-      'Up to 5 invoices per month',
-      'Up to 3 clients',
-      'PDF download',
-      'Basic email sending',
-      'VAT invoicing',
-    ],
-    limits: { invoices: 5, clients: 3, teamMembers: 1 },
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: 1200,
-    priceLabel: '£12/mo',
-    description: 'For growing businesses and sole traders',
-    icon: ShieldCheckIcon,
-    badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
-    features: [
-      'Unlimited invoices',
-      'Unlimited clients',
-      'Recurring invoices',
-      'Payment reminders',
-      'VAT reports & MTD export',
-      'Up to 5 team members',
-      'Branded PDF templates',
-      'Priority support',
-    ],
-    limits: { invoices: null, clients: null, teamMembers: 5 },
-    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: null,
-    priceLabel: 'Custom',
-    description: 'For agencies and accountancy firms',
-    icon: BuildingIcon,
-    badgeClass: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
-    features: [
-      'Everything in Pro',
-      'Unlimited team members',
-      'Multiple organisations',
-      'Custom invoice templates',
-      'Dedicated account manager',
-      'SLA & uptime guarantee',
-      'API access',
-    ],
-    limits: { invoices: null, clients: null, teamMembers: null },
-  },
-]
+function buildPlans(proPricePence: number, enterprisePricePence: number): Plan[] {
+  const proLabel = proPricePence < 0 ? 'Custom' : `£${(proPricePence / 100).toFixed(0)}/mo`
+  const entLabel = enterprisePricePence < 0 ? 'Custom' : `£${(enterprisePricePence / 100).toFixed(0)}/mo`
+
+  return [
+    {
+      id: 'free',
+      name: 'Free',
+      price: 0,
+      priceLabel: '£0/mo',
+      description: 'For freelancers just getting started',
+      icon: ZapIcon,
+      badgeClass: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+      features: [
+        'Up to 5 invoices per month',
+        'Up to 3 clients',
+        'PDF download',
+        'Basic email sending',
+        'VAT invoicing',
+      ],
+      limits: { invoices: 5, clients: 3, teamMembers: 1 },
+    },
+    {
+      id: 'pro',
+      name: 'Pro',
+      price: proPricePence,
+      priceLabel: proLabel,
+      description: 'For growing businesses and sole traders',
+      icon: ShieldCheckIcon,
+      badgeClass: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
+      features: [
+        'Unlimited invoices',
+        'Unlimited clients',
+        'Recurring invoices',
+        'Payment reminders',
+        'VAT reports & MTD export',
+        'Up to 5 team members',
+        'Branded PDF templates',
+        'Priority support',
+      ],
+      limits: { invoices: null, clients: null, teamMembers: 5 },
+      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise',
+      price: enterprisePricePence < 0 ? null : enterprisePricePence,
+      priceLabel: entLabel,
+      description: 'For agencies and accountancy firms',
+      icon: BuildingIcon,
+      badgeClass: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
+      features: [
+        'Everything in Pro',
+        'Unlimited team members',
+        'Multiple organisations',
+        'Custom invoice templates',
+        'Dedicated account manager',
+        'SLA & uptime guarantee',
+        'API access',
+      ],
+      limits: { invoices: null, clients: null, teamMembers: null },
+    },
+  ]
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -111,6 +116,8 @@ interface BillingSettingsProps {
   invoicesUsed?: number
   clientsUsed?: number
   stripePortalUrl?: string
+  proPricePence?: number
+  enterprisePricePence?: number
 }
 
 // ---------------------------------------------------------------------------
@@ -176,8 +183,11 @@ export function BillingSettings({
   invoicesUsed = 0,
   clientsUsed = 0,
   stripePortalUrl,
+  proPricePence = 1200,
+  enterprisePricePence = 4900,
 }: BillingSettingsProps) {
   const router = useRouter()
+  const PLANS = buildPlans(proPricePence, enterprisePricePence)
   const [upgrading, setUpgrading] = React.useState<string | null>(null)
   const activePlan = PLANS.find((p) => p.id === currentPlan) ?? PLANS[0]!
 

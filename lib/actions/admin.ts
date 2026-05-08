@@ -175,3 +175,105 @@ export async function updatePlanLimits(plan: SubscriptionPlan, limits: PlanLimit
   })
   revalidatePath('/admin/plans')
 }
+
+// ── Plan pricing ──────────────────────────────────────────────────────────────
+
+export interface PlanPrices {
+  /** Price in pence per month. 0 = free, -1 = custom/contact */
+  FREE: number
+  PRO: number
+  ENTERPRISE: number
+}
+
+const DEFAULT_PRICES: PlanPrices = {
+  FREE: 0,
+  PRO: 1200, // £12/mo
+  ENTERPRISE: 4900, // £49/mo
+}
+
+/**
+ * Fetch the current plan prices from SiteConfig.
+ * Falls back to defaults if not yet set.
+ */
+export async function getPlanPrices(): Promise<PlanPrices> {
+  const config = await prisma.siteConfig.findUnique({ where: { id: 'default' } })
+  if (config?.planPrices && typeof config.planPrices === 'object') {
+    const p = config.planPrices as Record<string, unknown>
+    return {
+      FREE: typeof p.FREE === 'number' ? p.FREE : 0,
+      PRO: typeof p.PRO === 'number' ? p.PRO : DEFAULT_PRICES.PRO,
+      ENTERPRISE: typeof p.ENTERPRISE === 'number' ? p.ENTERPRISE : DEFAULT_PRICES.ENTERPRISE,
+    }
+  }
+  return DEFAULT_PRICES
+}
+
+/**
+ * Manually update plan prices (admin override).
+ */
+export async function updatePlanPrices(prices: PlanPrices) {
+  await requireAdmin()
+  await prisma.siteConfig.upsert({
+    where: { id: 'default' },
+    create: {
+      id: 'default',
+      planLimitsFree: DEFAULT_LIMITS.FREE as object,
+      planLimitsPro: DEFAULT_LIMITS.PRO as object,
+      planLimitsEnterprise: DEFAULT_LIMITS.ENTERPRISE as object,
+      planPrices: prices as object,
+    },
+    update: { planPrices: prices as object },
+  })
+  revalidatePath('/admin/plans')
+  revalidatePath('/')
+  revalidatePath('/settings/billing')
+}
+
+/**
+ * Sync plan prices from Stripe.
+ * Reads the active price for each configured price ID and stores the amount in pence.
+ */
+export async function syncPricesFromStripe(): Promise<PlanPrices> {
+  await requireAdmin()
+
+  const { getStripe, PRICE_IDS } = await import('@/lib/stripe')
+  const stripe = getStripe()
+
+  const prices: PlanPrices = { FREE: 0, PRO: 0, ENTERPRISE: 0 }
+
+  for (const plan of ['PRO', 'ENTERPRISE'] as const) {
+    const priceId = PRICE_IDS[plan]
+    if (!priceId) {
+      prices[plan] = plan === 'PRO' ? DEFAULT_PRICES.PRO : DEFAULT_PRICES.ENTERPRISE
+      continue
+    }
+
+    try {
+      const price = await stripe.prices.retrieve(priceId)
+      // Stripe stores amount in smallest currency unit (pence for GBP)
+      prices[plan] = price.unit_amount ?? 0
+    } catch (err) {
+      console.error(`[syncPricesFromStripe] Failed to fetch price for ${plan}:`, err)
+      prices[plan] = plan === 'PRO' ? DEFAULT_PRICES.PRO : DEFAULT_PRICES.ENTERPRISE
+    }
+  }
+
+  // Save to DB
+  await prisma.siteConfig.upsert({
+    where: { id: 'default' },
+    create: {
+      id: 'default',
+      planLimitsFree: DEFAULT_LIMITS.FREE as object,
+      planLimitsPro: DEFAULT_LIMITS.PRO as object,
+      planLimitsEnterprise: DEFAULT_LIMITS.ENTERPRISE as object,
+      planPrices: prices as object,
+    },
+    update: { planPrices: prices as object },
+  })
+
+  revalidatePath('/admin/plans')
+  revalidatePath('/')
+  revalidatePath('/settings/billing')
+
+  return prices
+}

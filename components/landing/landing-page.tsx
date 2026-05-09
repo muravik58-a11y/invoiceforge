@@ -436,7 +436,7 @@ export function LandingPage({ footer }: { footer: FooterData }) {
                 nativeButton={false} render={<Link href="#pricing" />}
                 size="lg"
                 variant="outline"
-                className="h-11 px-8 text-base border-white/30 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground"
+                className="h-11 px-8 text-base border-white/40 text-white hover:bg-white/10 hover:text-white"
               >
                 See pricing
               </Button>
@@ -448,7 +448,7 @@ export function LandingPage({ footer }: { footer: FooterData }) {
       {/* ── Footer ── */}
       <footer className="border-t border-border bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <div className={`grid gap-8 sm:grid-cols-2 lg:grid-cols-${Math.min(footer.linkGroups.length + 1, 4)}`}>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div className="lg:col-span-1">
               <Link href="/" className="flex items-center gap-2 font-bold tracking-tight">
                 <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-black">IF</span>

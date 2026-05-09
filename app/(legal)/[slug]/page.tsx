@@ -35,11 +35,23 @@ export default async function LegalPage({ params }: Props) {
             </span>
             InvoiceForge UK
           </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            ← Back to home
+          </Link>
         </div>
       </header>
 
       {/* Content */}
       <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+        >
+          ← Back to InvoiceForge
+        </Link>
         <h1 className="text-3xl font-bold tracking-tight">{page.title}</h1>
         <div
           className="prose prose-gray dark:prose-invert mt-8 max-w-none"

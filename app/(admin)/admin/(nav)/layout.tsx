@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import { LayoutDashboard, Settings, Sliders, LogOut } from 'lucide-react'
+import { LayoutDashboard, Settings, Sliders, FileText, LogOut } from 'lucide-react'
 import { adminLogout } from '@/lib/actions/admin'
 
 const navLinks = [
   { href: '/admin/overview', label: 'Overview', icon: LayoutDashboard },
   { href: '/admin/settings', label: 'App Settings', icon: Settings },
   { href: '/admin/plans', label: 'Plan Limits', icon: Sliders },
+  { href: '/admin/legal', label: 'Legal Pages', icon: FileText },
 ]
 
 export default function AdminNavLayout({ children }: { children: React.ReactNode }) {

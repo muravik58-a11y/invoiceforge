@@ -1,9 +1,14 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Plus, Trash2 } from 'lucide-react'
 import { updateSiteConfig } from '@/lib/actions/admin'
 import type { SiteConfig } from '@prisma/client'
+
+interface FooterLinkGroup {
+  title: string
+  links: { label: string; href: string }[]
+}
 
 interface Props {
   config: SiteConfig
@@ -85,6 +90,15 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export function SiteSettingsForm({ config }: Props) {
   const [heroHeadline, setHeroHeadline] = useState(config.heroHeadline)
   const [heroSubheadline, setHeroSubheadline] = useState(config.heroSubheadline)
+  const [footerText, setFooterText] = useState(config.footerText ?? '')
+  const [footerLinks, setFooterLinks] = useState<FooterLinkGroup[]>(
+    config.footerLinks && typeof config.footerLinks === 'object' && Array.isArray(config.footerLinks)
+      ? (config.footerLinks as unknown as FooterLinkGroup[])
+      : [
+          { title: 'Product', links: [{ label: 'Features', href: '#features' }, { label: 'Pricing', href: '#pricing' }] },
+          { title: 'Company', links: [{ label: 'About', href: '#' }, { label: 'Contact', href: '#' }] },
+        ],
+  )
   const [maintenanceMode, setMaintenanceMode] = useState(config.maintenanceMode)
   const [newSignupsEnabled, setNewSignupsEnabled] = useState(config.newSignupsEnabled)
   const [saved, setSaved] = useState(false)
@@ -96,7 +110,14 @@ export function SiteSettingsForm({ config }: Props) {
     setSaved(false)
     startTransition(async () => {
       try {
-        await updateSiteConfig({ heroHeadline, heroSubheadline, maintenanceMode, newSignupsEnabled })
+        await updateSiteConfig({
+          heroHeadline,
+          heroSubheadline,
+          footerText,
+          footerLinks,
+          maintenanceMode,
+          newSignupsEnabled,
+        })
         setSaved(true)
         setTimeout(() => setSaved(false), 3000)
       } catch {
@@ -135,6 +156,117 @@ export function SiteSettingsForm({ config }: Props) {
             className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
           />
         </Field>
+      </Section>
+
+      {/* Footer */}
+      <Section title="Footer">
+        <Field
+          id="footerText"
+          label="Footer text"
+          hint="Extra text shown below the footer links, e.g. company registration details."
+        >
+          <textarea
+            id="footerText"
+            rows={3}
+            value={footerText}
+            onChange={(e) => setFooterText(e.target.value)}
+            placeholder="Registered in England & Wales · ICO registered · GDPR compliant"
+            className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+          />
+        </Field>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-gray-300">Footer link columns</label>
+          <p className="mb-3 text-xs text-gray-600">Each column appears in the site footer. Legal links (Terms, Privacy, etc.) are managed separately on the Legal Pages screen.</p>
+          <div className="space-y-4">
+            {footerLinks.map((group, gi) => (
+              <div key={gi} className="rounded-lg border border-gray-700 bg-gray-800/50 p-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <input
+                    value={group.title}
+                    onChange={(e) => {
+                      const updated = [...footerLinks]
+                      updated[gi] = { ...updated[gi], title: e.target.value }
+                      setFooterLinks(updated)
+                    }}
+                    placeholder="Column title"
+                    className="flex-1 rounded border border-gray-600 bg-gray-800 px-2 py-1 text-sm text-gray-100 outline-none focus:border-red-500"
+                  />
+                  <button
+                    onClick={() => setFooterLinks(footerLinks.filter((_, i) => i !== gi))}
+                    className="flex h-7 w-7 items-center justify-center rounded text-gray-500 hover:bg-red-900/30 hover:text-red-400"
+                    title="Remove column"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                {group.links.map((link, li) => (
+                  <div key={li} className="flex items-center gap-2 ml-2 mb-1.5">
+                    <input
+                      value={link.label}
+                      onChange={(e) => {
+                        const updated = [...footerLinks]
+                        updated[gi] = {
+                          ...updated[gi],
+                          links: updated[gi].links.map((l, i) => i === li ? { ...l, label: e.target.value } : l),
+                        }
+                        setFooterLinks(updated)
+                      }}
+                      placeholder="Label"
+                      className="w-28 rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-gray-100 outline-none focus:border-red-500"
+                    />
+                    <input
+                      value={link.href}
+                      onChange={(e) => {
+                        const updated = [...footerLinks]
+                        updated[gi] = {
+                          ...updated[gi],
+                          links: updated[gi].links.map((l, i) => i === li ? { ...l, href: e.target.value } : l),
+                        }
+                        setFooterLinks(updated)
+                      }}
+                      placeholder="URL (#features, /terms, https://...)"
+                      className="flex-1 rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-gray-100 outline-none focus:border-red-500"
+                    />
+                    <button
+                      onClick={() => {
+                        const updated = [...footerLinks]
+                        updated[gi] = {
+                          ...updated[gi],
+                          links: updated[gi].links.filter((_, i) => i !== li),
+                        }
+                        setFooterLinks(updated)
+                      }}
+                      className="flex h-6 w-6 items-center justify-center rounded text-gray-500 hover:bg-red-900/30 hover:text-red-400"
+                      title="Remove link"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => {
+                    const updated = [...footerLinks]
+                    updated[gi] = {
+                      ...updated[gi],
+                      links: [...updated[gi].links, { label: '', href: '' }],
+                    }
+                    setFooterLinks(updated)
+                  }}
+                  className="ml-2 mt-1 flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300"
+                >
+                  <Plus className="h-3 w-3" /> Add link
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={() => setFooterLinks([...footerLinks, { title: '', links: [] }])}
+              className="flex items-center gap-1.5 rounded-lg border border-dashed border-gray-700 px-3 py-2 text-xs text-gray-500 hover:border-gray-500 hover:text-gray-300"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add column
+            </button>
+          </div>
+        </div>
       </Section>
 
       {/* App controls */}

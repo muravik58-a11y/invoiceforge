@@ -11,7 +11,11 @@ const isPublicAppRoute = createRouteMatcher([
   '/sign-up(.*)',
   '/api/webhooks(.*)',
   '/api/stripe/webhook',
+  '/api/prices',
+  '/(terms|privacy|cookies|gdpr)',
 ])
+
+const isLandingPage = createRouteMatcher(['/'])
 
 // ── Edge-compatible HMAC-SHA256 verification ──────────────────────────────────
 
@@ -75,6 +79,14 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Regular app routes: Clerk auth
   if (!isPublicAppRoute(req)) {
     await auth.protect()
+  }
+
+  // Logged-in users should never see the landing page — redirect to dashboard
+  if (isLandingPage(req)) {
+    const { userId } = await auth()
+    if (userId) {
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
   }
 })
 

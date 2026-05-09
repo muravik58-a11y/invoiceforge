@@ -463,6 +463,10 @@ model SiteConfig {
   heroHeadline         String   @default("Simple, compliant invoicing + inventory for UK businesses")
   heroSubheadline      String   @default("Send professional, VAT-compliant invoices in minutes. Manage stock, chase late payers, and export HMRC-ready reports — all in one place built for the UK market.")
 
+  // Footer
+  footerText           String?  // Extra text shown in footer (e.g. company details)
+  footerLinks          Json?    // JSON array of { label, href } for footer link columns
+
   // App controls
   maintenanceMode      Boolean  @default(false)
   newSignupsEnabled    Boolean  @default(true)
@@ -477,4 +481,25 @@ model SiteConfig {
   planPrices           Json?
 
   updatedAt            DateTime @updatedAt
+
+  // Relations
+  legalPages           LegalPage[]
+}
+
+// ─────────────────────────────────────────────
+// LEGAL PAGES (Terms, Privacy, Cookies, GDPR)
+// ─────────────────────────────────────────────
+
+model LegalPage {
+  id        String   @id @default(cuid())
+  slug      String   @unique  // e.g. "terms", "privacy", "cookies", "gdpr"
+  title     String              // e.g. "Terms of Service"
+  content   String              // HTML content of the page
+  isPublished Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  siteConfig SiteConfig @relation(fields: [siteConfigId], references: [id], onDelete: Cascade)
+  siteConfigId String   @default("default")
 }

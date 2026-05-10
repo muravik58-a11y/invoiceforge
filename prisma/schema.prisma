@@ -462,6 +462,20 @@ model SiteConfig {
   // Landing page copy
   heroHeadline         String   @default("Simple, compliant invoicing + inventory for UK businesses")
   heroSubheadline      String   @default("Send professional, VAT-compliant invoices in minutes. Manage stock, chase late payers, and export HMRC-ready reports — all in one place built for the UK market.")
+  heroBadgeText        String   @default("HMRC-ready · Making Tax Digital compliant")
+
+  // Features section (JSON array of { icon, title, description })
+  features             Json?
+
+  // Testimonials section (JSON array of { quote, author, role, location, stars })
+  testimonials         Json?
+
+  // FAQ section (JSON array of { question, answer })
+  faqs                 Json?
+
+  // CTA section
+  ctaHeadline          String   @default("Ready to take control of your invoicing?")
+  ctaSubheadline       String   @default("Join thousands of UK businesses saving hours every month. Get started free — upgrade when you need to.")
 
   // Footer
   footerText           String?  // Extra text shown in footer (e.g. company details)

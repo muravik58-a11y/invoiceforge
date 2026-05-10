@@ -132,6 +132,12 @@ export async function getSiteConfig() {
 export interface SiteConfigUpdate {
   heroHeadline?: string
   heroSubheadline?: string
+  heroBadgeText?: string
+  features?: object
+  testimonials?: object
+  faqs?: object
+  ctaHeadline?: string
+  ctaSubheadline?: string
   footerText?: string
   footerLinks?: object // JSON array of { label, href }[]
   maintenanceMode?: boolean
@@ -482,5 +488,13 @@ export async function upsertLegalPage(data: LegalPageData) {
   })
   revalidatePath(`/admin/legal`)
   revalidatePath(`/${data.slug}`)
+  revalidatePath('/')
+}
+
+export async function deleteLegalPage(slug: string) {
+  await requireAdmin()
+  await prisma.legalPage.delete({ where: { slug } })
+  revalidatePath('/admin/legal')
+  revalidatePath(`/${slug}`)
   revalidatePath('/')
 }

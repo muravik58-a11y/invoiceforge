@@ -2,8 +2,6 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getPublishedLegalPage } from '@/lib/actions/admin'
 
-const VALID_SLUGS = ['terms', 'privacy', 'cookies', 'gdpr']
-
 // Force dynamic rendering — legal pages are DB-driven
 export const dynamic = 'force-dynamic'
 
@@ -20,7 +18,6 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function LegalPage({ params }: Props) {
   const { slug } = await params
-  if (!VALID_SLUGS.includes(slug)) notFound()
   const page = await getPublishedLegalPage(slug)
   if (!page) notFound()
 

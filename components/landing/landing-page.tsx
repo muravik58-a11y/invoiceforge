@@ -24,6 +24,10 @@ import {
   ArrowRight,
   Star,
   Zap,
+  Heart,
+  Globe,
+  Lock,
+  Clock,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PricingSection } from '@/components/landing/pricing-section'
@@ -48,106 +52,84 @@ export interface FooterData {
   legalLinks: { label: string; href: string }[]
 }
 
-// ─── Data ────────────────────────────────────────────────────────────────────
+export interface FeatureData {
+  icon: string
+  title: string
+  description: string
+}
 
-const features = [
-  {
-    icon: ShieldCheck,
-    title: 'UK VAT Compliant',
-    description:
-      'Automatically calculate VAT at 20%, 5%, or 0% rates. Generate HMRC-ready VAT returns and stay fully compliant with Making Tax Digital requirements.',
-  },
-  {
-    icon: FileText,
-    title: 'Professional PDFs',
-    description:
-      'Send beautifully branded invoices as PDFs in seconds. Customise with your logo, payment terms, and bank details — all formatted to UK standards.',
-  },
-  {
-    icon: RefreshCcw,
-    title: 'Recurring Invoices',
-    description:
-      'Automate billing for retainer clients. Set up weekly, monthly, or custom schedules and let InvoiceForge handle the paperwork while you focus on work.',
-  },
-  {
-    icon: Users,
-    title: 'Client CRM',
-    description:
-      'Keep all your client details, contact history, and outstanding balances in one place. Never chase a late payment without the full picture again.',
-  },
-  {
-    icon: Package,
-    title: 'Inventory Management',
-    description:
-      'Track stock levels, set reorder alerts, and tie inventory directly to invoices. Perfect for product-based UK businesses of any size.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Financial Reports',
-    description:
-      'Profit & loss, aged debtors, VAT summaries, and cash-flow forecasts — all exportable to CSV for your accountant or HMRC submission.',
-  },
-]
+export interface TestimonialData {
+  quote: string
+  author: string
+  role: string
+  location: string
+  stars: number
+}
 
-const testimonials = [
-  {
-    quote:
-      "InvoiceForge has completely transformed how I handle billing. The VAT calculations are spot-on and my accountant loves the MTD exports. Switched from spreadsheets six months ago and haven't looked back.",
-    author: 'Sarah Mitchell',
-    role: 'Freelance Graphic Designer',
-    location: 'Manchester',
-    stars: 5,
-  },
-  {
-    quote:
-      "We run a small plumbing company with five engineers and InvoiceForge handles everything — invoicing on-site from a tablet, inventory for parts, and the aged debtors report has genuinely improved our cash flow.",
-    author: 'James Thornton',
-    role: 'Director, Thornton & Sons Plumbing Ltd',
-    location: 'Bristol',
-    stars: 5,
-  },
-  {
-    quote:
-      "The recurring invoices feature alone saves me at least two hours a week. As a London-based marketing consultant with a mix of retainer and project clients, the flexibility of InvoiceForge is exactly what I needed.",
-    author: 'Priya Kapoor',
-    role: 'Marketing Consultant',
-    location: 'London',
-    stars: 5,
-  },
-]
+export interface FaqData {
+  question: string
+  answer: string
+}
 
-const faqs = [
-  {
-    question: 'Is InvoiceForge UK Making Tax Digital (MTD) compliant?',
-    answer:
-      'Yes. InvoiceForge UK is built with MTD for VAT in mind. You can export your VAT data in the HMRC-compatible format and submit directly through our MTD-bridging integration.',
-  },
-  {
-    question: 'How does VAT calculation work?',
-    answer:
-      'InvoiceForge automatically applies the correct UK VAT rate — 20% standard, 5% reduced, or 0% zero-rated — to each line item on your invoice. VAT summaries are included on every invoice.',
-  },
-  {
-    question: 'Can I use InvoiceForge for both products and services?',
-    answer:
-      'Absolutely. InvoiceForge supports mixed invoices containing both service line items and product lines drawn from your inventory.',
-  },
-  {
-    question: 'Is my data stored securely in the UK?',
-    answer:
-      "Yes. All customer data is stored in EU/UK-region data centres and we are fully GDPR-compliant. Your invoices, client records, and financial data belong to you.",
-  },
-  {
-    question: 'Can I try InvoiceForge before paying?',
-    answer:
-      'Yes. Our Free plan lets you send up to 5 invoices per month with no time limit. The Pro plan comes with a 14-day free trial with full access — no credit card required.',
-  },
-  {
-    question: 'Does InvoiceForge integrate with accounting software?',
-    answer:
-      'We offer CSV and PDF exports compatible with Xero, QuickBooks, Sage, and FreeAgent. A direct Xero API integration is on our roadmap for Q3 2026.',
-  },
-]
+export interface LandingContent {
+  heroBadgeText: string
+  heroHeadline: string
+  heroSubheadline: string
+  features: FeatureData[]
+  testimonials: TestimonialData[]
+  faqs: FaqData[]
+  ctaHeadline: string
+  ctaSubheadline: string
+}
+
+// ─── Icon map ─────────────────────────────────────────────────────────────────
+
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  ShieldCheck,
+  FileText,
+  RefreshCcw,
+  Users,
+  Package,
+  BarChart3,
+  Zap,
+  Star,
+  Heart,
+  Globe,
+  Lock,
+  Clock,
+}
+
+// ─── Defaults ─────────────────────────────────────────────────────────────────
+
+const DEFAULT_CONTENT: LandingContent = {
+  heroBadgeText: 'HMRC-ready · Making Tax Digital compliant',
+  heroHeadline: 'Simple, compliant invoicing + inventory for UK businesses',
+  heroSubheadline:
+    'Send professional, VAT-compliant invoices in minutes. Manage stock, chase late payers, and export HMRC-ready reports — all in one place built for the UK market.',
+  features: [
+    { icon: 'ShieldCheck', title: 'UK VAT Compliant', description: 'Automatically calculate VAT at 20%, 5%, or 0% rates. Generate HMRC-ready VAT returns and stay fully compliant with Making Tax Digital requirements.' },
+    { icon: 'FileText', title: 'Professional PDFs', description: 'Send beautifully branded invoices as PDFs in seconds. Customise with your logo, payment terms, and bank details — all formatted to UK standards.' },
+    { icon: 'RefreshCcw', title: 'Recurring Invoices', description: 'Automate billing for retainer clients. Set up weekly, monthly, or custom schedules and let InvoiceForge handle the paperwork while you focus on work.' },
+    { icon: 'Users', title: 'Client CRM', description: 'Keep all your client details, contact history, and outstanding balances in one place. Never chase a late payment without the full picture again.' },
+    { icon: 'Package', title: 'Inventory Management', description: 'Track stock levels, set reorder alerts, and tie inventory directly to invoices. Perfect for product-based UK businesses of any size.' },
+    { icon: 'BarChart3', title: 'Financial Reports', description: 'Profit & loss, aged debtors, VAT summaries, and cash-flow forecasts — all exportable to CSV for your accountant or HMRC submission.' },
+  ],
+  testimonials: [
+    { quote: "InvoiceForge has completely transformed how I handle billing. The VAT calculations are spot-on and my accountant loves the MTD exports. Switched from spreadsheets six months ago and haven't looked back.", author: 'Sarah Mitchell', role: 'Freelance Graphic Designer', location: 'Manchester', stars: 5 },
+    { quote: "We run a small plumbing company with five engineers and InvoiceForge handles everything — invoicing on-site from a tablet, inventory for parts, and the aged debtors report has genuinely improved our cash flow.", author: 'James Thornton', role: 'Director, Thornton & Sons Plumbing Ltd', location: 'Bristol', stars: 5 },
+    { quote: "The recurring invoices feature alone saves me at least two hours a week. As a London-based marketing consultant with a mix of retainer and project clients, the flexibility of InvoiceForge is exactly what I needed.", author: 'Priya Kapoor', role: 'Marketing Consultant', location: 'London', stars: 5 },
+  ],
+  faqs: [
+    { question: 'Is InvoiceForge UK Making Tax Digital (MTD) compliant?', answer: 'Yes. InvoiceForge UK is built with MTD for VAT in mind. You can export your VAT data in the HMRC-compatible format and submit directly through our MTD-bridging integration.' },
+    { question: 'How does VAT calculation work?', answer: 'InvoiceForge automatically applies the correct UK VAT rate — 20% standard, 5% reduced, or 0% zero-rated — to each line item on your invoice. VAT summaries are included on every invoice.' },
+    { question: 'Can I use InvoiceForge for both products and services?', answer: 'Absolutely. InvoiceForge supports mixed invoices containing both service line items and product lines drawn from your inventory.' },
+    { question: 'Is my data stored securely in the UK?', answer: "Yes. All customer data is stored in EU/UK-region data centres and we are fully GDPR-compliant. Your invoices, client records, and financial data belong to you." },
+    { question: 'Can I try InvoiceForge before paying?', answer: 'Yes. Our Free plan lets you send up to 5 invoices per month with no time limit. The Pro plan comes with a 14-day free trial with full access — no credit card required.' },
+    { question: 'Does InvoiceForge integrate with accounting software?', answer: 'We offer CSV and PDF exports compatible with Xero, QuickBooks, Sage, and FreeAgent. A direct Xero API integration is on our roadmap for Q3 2026.' },
+  ],
+  ctaHeadline: 'Ready to take control of your invoicing?',
+  ctaSubheadline: 'Join thousands of UK businesses saving hours every month. Get started free — upgrade when you need to.',
+}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -188,7 +170,17 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
-export function LandingPage({ footer }: { footer: FooterData }) {
+export function LandingPage({ footer, content: contentProp }: { footer: FooterData; content?: LandingContent }) {
+  const content: LandingContent = {
+    heroBadgeText: contentProp?.heroBadgeText ?? DEFAULT_CONTENT.heroBadgeText,
+    heroHeadline: contentProp?.heroHeadline ?? DEFAULT_CONTENT.heroHeadline,
+    heroSubheadline: contentProp?.heroSubheadline ?? DEFAULT_CONTENT.heroSubheadline,
+    features: (contentProp?.features && contentProp.features.length > 0) ? contentProp.features : DEFAULT_CONTENT.features,
+    testimonials: (contentProp?.testimonials && contentProp.testimonials.length > 0) ? contentProp.testimonials : DEFAULT_CONTENT.testimonials,
+    faqs: (contentProp?.faqs && contentProp.faqs.length > 0) ? contentProp.faqs : DEFAULT_CONTENT.faqs,
+    ctaHeadline: contentProp?.ctaHeadline ?? DEFAULT_CONTENT.ctaHeadline,
+    ctaSubheadline: contentProp?.ctaSubheadline ?? DEFAULT_CONTENT.ctaSubheadline,
+  }
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { isSignedIn } = useAuth()
 
@@ -280,21 +272,15 @@ export function LandingPage({ footer }: { footer: FooterData }) {
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary">
               <Zap className="size-3" />
-              HMRC-ready · Making Tax Digital compliant
+              {content.heroBadgeText}
             </div>
 
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1]">
-              Simple, compliant invoicing{' '}
-              <span className="bg-gradient-to-r from-primary to-[oklch(0.58_0.22_280)] bg-clip-text text-transparent">
-                + inventory
-              </span>{' '}
-              <br className="hidden sm:block" />
-              for UK businesses
+              {content.heroHeadline}
             </h1>
 
             <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground leading-relaxed">
-              Send professional, VAT-compliant invoices in minutes. Manage stock, chase late
-              payers, and export HMRC-ready reports — all in one place built for the UK market.
+              {content.heroSubheadline}
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -340,8 +326,8 @@ export function LandingPage({ footer }: { footer: FooterData }) {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((feature) => {
-                const Icon = feature.icon
+              {content.features.map((feature) => {
+                const Icon = ICON_MAP[feature.icon] ?? Zap
                 return (
                   <Card key={feature.title} className="transition-shadow hover:shadow-md hover:shadow-primary/5">
                     <CardHeader>
@@ -374,7 +360,7 @@ export function LandingPage({ footer }: { footer: FooterData }) {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-3">
-              {testimonials.map((t) => (
+              {content.testimonials.map((t) => (
                 <Card key={t.author}>
                   <CardContent className="pt-4">
                     <div className="flex gap-0.5 mb-4">
@@ -409,7 +395,7 @@ export function LandingPage({ footer }: { footer: FooterData }) {
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card px-6">
-              {faqs.map((faq) => (
+              {content.faqs.map((faq) => (
                 <FaqItem key={faq.question} question={faq.question} answer={faq.answer} />
               ))}
             </div>
@@ -420,10 +406,10 @@ export function LandingPage({ footer }: { footer: FooterData }) {
         <section className="py-20 sm:py-24 bg-primary">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-extrabold text-primary-foreground sm:text-4xl">
-              Ready to take control of your invoicing?
+              {content.ctaHeadline}
             </h2>
             <p className="mt-4 text-primary-foreground/80 max-w-xl mx-auto">
-              Join thousands of UK businesses saving hours every month. Get started free — upgrade when you need to.
+              {content.ctaSubheadline}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
               <SignUpButton mode="modal">
@@ -436,7 +422,7 @@ export function LandingPage({ footer }: { footer: FooterData }) {
                 nativeButton={false} render={<Link href="#pricing" />}
                 size="lg"
                 variant="outline"
-                className="h-11 px-8 text-base border-white/40 text-white hover:bg-white/10 hover:text-white"
+                className="h-11 px-8 text-base border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10"
               >
                 See pricing
               </Button>

@@ -1,6 +1,9 @@
 import { LandingPage, type FooterData, type LandingContent } from '@/components/landing/landing-page'
 import { prisma } from '@/lib/prisma'
 
+// Force dynamic rendering — all content is DB-driven
+export const dynamic = 'force-dynamic'
+
 const DEFAULT_FOOTER: FooterData = {
   footerText: 'Registered in England & Wales · ICO registered · GDPR compliant',
   linkGroups: [
